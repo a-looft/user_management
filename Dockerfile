@@ -53,8 +53,17 @@ USER myuser
 # Copy application code with appropriate ownership
 COPY --chown=myuser:myuser . .
 
+# switch back to root to modify permissions
+USER root
+
+# give execute permission to script
+RUN chmod +x /myapp/start.sh
+
+# switch back to non-root user
+USER myuser
+
 # Inform Docker that the container listens on the specified port at runtime.
 EXPOSE 8000
 
-# Use ENTRYPOINT to specify the executable when the container starts.
-ENTRYPOINT ["uvicorn", "app.main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
+# replace ENTRYPOINT with the start script
+ENTRYPOINT ["/myapp/start.sh"]
